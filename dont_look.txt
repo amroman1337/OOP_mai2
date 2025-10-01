@@ -1,0 +1,7 @@
+mkdir build 
+cd build
+cmake ..
+cmake --build .
+cmake --build . --config Release
+.\Release\BinaryApp.exe
+.\Release\BinaryTests.exe
