@@ -1,5 +1,4 @@
-#ifndef BINARY_H
-#define BINARY_H
+#pragma once
 
 #include <string>
 
@@ -33,5 +32,3 @@ private:
     size_t size;
     unsigned char* data;
 };
-
-#endif

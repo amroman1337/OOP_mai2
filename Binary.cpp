@@ -6,8 +6,7 @@
 
 Binary::Binary() : size(0), data(nullptr) {}
 
-Binary::Binary(size_t size) : size(size), data(new unsigned char[size])
-{
+Binary::Binary(size_t size) : size(size), data(new unsigned char[size]) {
     for (size_t i = 0; i < size; ++i) {
         data[i] = 0;
     }
@@ -19,7 +18,7 @@ Binary::Binary(const std::initializer_list<unsigned char>& initList)
     for (auto value : initList) {
         if (value != 0 && value != 1) {
             delete[] data;
-            throw std::invalid_argument("Допустимы только значения 0 и 1");
+            throw std::invalid_argument("разрешены значения только 0 и 1");
         }
         data[i++] = value;
     }
@@ -35,7 +34,7 @@ Binary::Binary(const std::string& binaryString)
             data[i] = 1;
         } else {
             delete[] data;
-            throw std::invalid_argument("Строка должна содержать только '0' и '1'");
+            throw std::invalid_argument("строка должна содержать только '0' и '1'");
         }
     }
 }
@@ -48,10 +47,11 @@ Binary::Binary(const Binary& other)
 }
 
 Binary::Binary(Binary&& other) noexcept: size(other.size), data(other.data) {
+    size = other.size;
+    data = other.data;
     other.size = 0;
     other.data = nullptr;
 }
-
 
 Binary::~Binary() noexcept {
     if (data != nullptr) {
@@ -93,15 +93,14 @@ size_t Binary::getSize() const {
 
 unsigned char Binary::getBit(size_t index) const {
     if (index >= size) {
-        throw std::out_of_range("Индекс за пределами массива");
+        throw std::out_of_range("");
     }
     return data[index];
 }
 
-
 Binary Binary::add(const Binary& other) const {
     if (size != other.size) {
-        throw std::invalid_argument("Числа должны иметь одинаковый размер");
+        throw std::invalid_argument("числа должны быть одинаковы по размеру");
     }
     Binary result(size);
     unsigned char carry = 0;
@@ -113,18 +112,15 @@ Binary Binary::add(const Binary& other) const {
         result.data[i] = sum % 2;
         carry = sum / 2;
     }
-    
     if (carry > 0) {
-        throw std::overflow_error("Произошло переполнение при сложении");
+        throw std::overflow_error("переполнение при сложении");
     }
-    
     return result;
 }
 
-
 Binary Binary::subtract(const Binary& other) const {
     if (size != other.size) {
-        throw std::invalid_argument("Числа должны иметь одинаковый размер");
+        throw std::invalid_argument("числа должны быть одинаковы по размеру");
     }
     Binary result(size);
     unsigned char borrow = 0;
@@ -142,10 +138,39 @@ Binary Binary::subtract(const Binary& other) const {
     }
     
     if (borrow > 0) {
-        throw std::underflow_error("Отрицательный результат при вычитании");
+        throw std::underflow_error("отрицательный результат при вычитании");
     }
     
     return result;
+}
+
+bool Binary::greaterThan(const Binary& other) const {
+    if (size != other.size) {
+        throw std::invalid_argument("числа должны быть одинаковы по размеру");
+    }
+    for (int i = static_cast<int>(size) - 1; i >= 0; --i) {
+        if (data[i] > other.data[i]) {
+            return true;
+        } else if (data[i] < other.data[i]) {
+            return false;
+        }
+    }
+    return false;
+}
+
+bool Binary::lessThan(const Binary& other) const {
+    if (size != other.size) {
+        throw std::invalid_argument("числа должны быть одинаковы по размеру");
+    }
+    
+    for (int i = static_cast<int>(size) - 1; i >= 0; --i) {
+        if (data[i] < other.data[i]) {
+            return true;
+        } else if (data[i] > other.data[i]) {
+            return false;
+        }
+    }
+    return false;
 }
 
 bool Binary::equals(const Binary& other) const {
@@ -160,38 +185,9 @@ bool Binary::equals(const Binary& other) const {
     return true;
 }
 
-bool Binary::greaterThan(const Binary& other) const {
-    if (size != other.size) {
-        throw std::invalid_argument("Числа должны иметь одинаковый размер для сравнения");
-    }
-    for (int i = static_cast<int>(size) - 1; i >= 0; --i) {
-        if (data[i] > other.data[i]) {
-            return true;
-        } else if (data[i] < other.data[i]) {
-            return false;
-        }
-    }
-    return false;
-}
-
-bool Binary::lessThan(const Binary& other) const {
-    if (size != other.size) {
-        throw std::invalid_argument("Числа должны иметь одинаковый размер для сравнения");
-    }
-    
-    for (int i = static_cast<int>(size) - 1; i >= 0; --i) {
-        if (data[i] < other.data[i]) {
-            return true;
-        } else if (data[i] > other.data[i]) {
-            return false;
-        }
-    }
-    return false;
-}
-
 std::string Binary::toString() const {
     std::string result;
-    for (size_t i = 0; i < size; ++i) {
+    for (int i = size - 1; i >= 0; --i) {
         result += (data[i] == 0) ? '0' : '1';
     }
     return result;
