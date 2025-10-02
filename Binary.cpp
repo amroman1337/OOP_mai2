@@ -103,16 +103,16 @@ Binary Binary::add(const Binary& other) const {
         throw std::invalid_argument("числа должны быть одинаковы по размеру");
     }
     Binary result(size);
-    unsigned char carry = 0;
+    unsigned char help = 0;
     for (size_t i = 0; i < size; ++i) {
         unsigned char a = data[i];
         unsigned char b = other.data[i];
-        unsigned char sum = a + b + carry;
+        unsigned char sum = a + b + help;
         
         result.data[i] = sum % 2;
-        carry = sum / 2;
+        help = sum / 2;
     }
-    if (carry > 0) {
+    if (help > 0) {
         throw std::overflow_error("переполнение при сложении");
     }
     return result;
@@ -123,21 +123,20 @@ Binary Binary::subtract(const Binary& other) const {
         throw std::invalid_argument("числа должны быть одинаковы по размеру");
     }
     Binary result(size);
-    unsigned char borrow = 0;
+    unsigned char help = 0;
     for (size_t i = 0; i < size; ++i) {
-        int diff = data[i] - other.data[i] - borrow;
+        int diff = data[i] - other.data[i] - help;
         
         if (diff < 0) {
             diff += 2;
-            borrow = 1;
+            help = 1;
         } else {
-            borrow = 0;
+            help = 0;
         }
-        
         result.data[i] = static_cast<unsigned char>(diff);
     }
     
-    if (borrow > 0) {
+    if (help > 0) {
         throw std::underflow_error("отрицательный результат при вычитании");
     }
     

@@ -36,39 +36,37 @@ TEST(BinaryTest, InvalidInput) {
 
 // арифметика
 TEST(BinaryTest, Addition) {
-    Binary a{0, 0, 1, 1}; // 1100 (12)
-    Binary b{0, 1, 0, 1}; // 1010 (10)
+    Binary a{0, 0, 1, 1};
+    Binary b{0, 1, 0, 1};
     Binary result = a.add(b);
-    
-    // 12 + 10 = 22 (10110), должно быть переполнением
+
     EXPECT_THROW(a.add(b), std::overflow_error);
     
-    Binary c{0, 0, 0, 1}; // 1000 (8)
-    Binary d{0, 0, 0, 1}; // 1000 (8)
+    Binary c{0, 0, 0, 1};
+    Binary d{0, 0, 0, 1};
     EXPECT_THROW(c.add(d), std::overflow_error);
 }
 
 TEST(BinaryTest, Subtraction) {
-    Binary a{0, 0, 1, 1}; // 1100 (12)
-    Binary b{0, 0, 0, 1}; // 1000 (8)
+    Binary a{0, 0, 1, 1};
+    Binary b{0, 0, 0, 1};
     Binary result = a.subtract(b);
-    
-    // 12 - 8 = 4 (0100)
+
     EXPECT_EQ(result.getBit(0), 0);
     EXPECT_EQ(result.getBit(1), 0);
     EXPECT_EQ(result.getBit(2), 1);
     EXPECT_EQ(result.getBit(3), 0);
     
-    Binary small{0, 0, 0, 1}; // 1000 (8)
-    Binary large{0, 0, 1, 1}; // 1100 (12)
+    Binary small{0, 0, 0, 1};
+    Binary large{0, 0, 1, 1};
     EXPECT_THROW(small.subtract(large), std::underflow_error);
 }
 
 // сравнения
 TEST(BinaryTest, Comparison) {
-    Binary a{1, 0, 0, 1}; // 1001 (9)
-    Binary b{1, 0, 1, 0}; // 0101 (5)
-    Binary c{1, 0, 0, 1}; // 1001 (9)
+    Binary a{1, 0, 0, 1};
+    Binary b{1, 0, 1, 0};
+    Binary c{1, 0, 0, 1};
     
     EXPECT_TRUE(a.equals(c));
     EXPECT_FALSE(a.equals(b));
@@ -93,13 +91,13 @@ TEST(BinaryTest, Output) {
 
 // дополнительные тесты
 TEST(BinaryTest, EdgeCases) {
-    Binary empty;
-    EXPECT_EQ(empty.getSize(), 0);
-    EXPECT_THROW(empty.getBit(0), std::out_of_range);
+    Binary a;
+    EXPECT_EQ(a.getSize(), 0);
+    EXPECT_THROW(a.getBit(0), std::out_of_range);
     
-    Binary single{1};
-    EXPECT_EQ(single.getSize(), 1);
-    EXPECT_EQ(single.getBit(0), 1);
+    Binary one{1};
+    EXPECT_EQ(one.getSize(), 1);
+    EXPECT_EQ(one.getBit(0), 1);
     
     Binary zeros{0, 0, 0, 0};
     for (size_t i = 0; i < 4; ++i) {
